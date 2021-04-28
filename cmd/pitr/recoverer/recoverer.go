@@ -444,8 +444,9 @@ func getExtendGTIDSet(gtidSet, gtid string) (string, error) {
 	}
 
 	e := strings.Split(s[1], "-")
+	eidx := 1
 	if len(e) < 2 {
-		return "", errors.Errorf("incorrect id range in %s", gtidSet)
+		eidx = 0
 	}
 	gs := strings.Split(gtid, ":")
 	if len(gs) < 2 {
@@ -453,7 +454,7 @@ func getExtendGTIDSet(gtidSet, gtid string) (string, error) {
 	}
 	es := strings.Split(gs[1], "-")
 
-	return gs[0] + ":" + es[0] + "-" + e[1], nil
+	return gs[0] + ":" + es[0] + "-" + e[eidx], nil
 }
 
 func reverse(list []string) {
