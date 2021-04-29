@@ -123,12 +123,9 @@ const (
 type ClusterConditionType string
 
 const (
-	ClusterReady        ClusterConditionType = "Ready"
-	ClusterInit                              = "Initializing"
-	ClusterPXCReady                          = "PXCReady"
-	ClusterProxyReady                        = "ProxySQLReady"
-	ClusterHAProxyReady                      = "HAProxyReady"
-	ClusterError                             = "Error"
+	ClusterReady ClusterConditionType = "Ready"
+	ClusterInit  ClusterConditionType = "Initializing"
+	ClusterError ClusterConditionType = "Error"
 )
 
 type ClusterCondition struct {
@@ -431,6 +428,7 @@ type App interface {
 
 type StatefulApp interface {
 	App
+	Name() string
 	StatefulSet() *appsv1.StatefulSet
 	Service() string
 	UpdateStrategy(cr *PerconaXtraDBCluster) appsv1.StatefulSetUpdateStrategy
@@ -682,7 +680,7 @@ func (cr *PerconaXtraDBCluster) CheckNSetDefaults(serverVersion *version.ServerV
 }
 
 const (
-	maxSafePXCSize = 5
+	maxSafePXCSize   = 5
 	minSafeProxySize = 2
 )
 
@@ -891,4 +889,12 @@ func (cr *PerconaXtraDBCluster) HAProxyReplicasNamespacedName() types.Namespaced
 		Name:      cr.Name + "-haproxy-replicas",
 		Namespace: cr.Namespace,
 	}
+}
+
+func (cr *PerconaXtraDBCluster) HAProxyEnabled() bool {
+	return cr.Spec.HAProxy != nil && cr.Spec.HAProxy.Enabled
+}
+
+func (cr *PerconaXtraDBCluster) ProxySQLEnabled() bool {
+	return cr.Spec.ProxySQL != nil && cr.Spec.ProxySQL.Enabled
 }
