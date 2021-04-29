@@ -411,6 +411,7 @@ func (r *Recoverer) setBinlogs() error {
 				if err != nil {
 					return errors.Wrap(err, "get gtid set for extend")
 				}
+				log.Println("MANAGING BINLOG", " gtid ", r.gtid, " binlog set ", binlogGTIDSet, " extended set ", set)
 				r.gtidSet = set
 			}
 			if len(r.gtidSet) == 0 {
@@ -437,31 +438,24 @@ func (r *Recoverer) setBinlogs() error {
 	return nil
 }
 
-func getExtendGTIDSet(gtidSet, gtid string) (string, error) {
-	s := strings.Split(gtidSet, ":")
-	if len(s) < 2 {
-		return "", errors.Errorf("incorrect source in gtid set %s", gtidSet)
+func getExtendGTIDSet(currentBinlogSet, transaction string) (string, error) {
+	currentBinlogSetSplitted := strings.Split(currentBinlogSet, ":")
+	if len(currentBinlogSetSplitted) < 2 {
+		return "", errors.Errorf("incorrect binlog set %s", currentBinlogSet)
 	}
 
-	gs := strings.Split(gtid, ":")
-	if len(gs) < 2 {
-		return "", errors.Errorf("incorrect source in gtid set %s", gtid)
+	transactionSplitted := strings.Split(transaction, ":")
+	if len(transactionSplitted) < 2 {
+		return "", errors.Errorf("incorrect transaction id %s", transactionSplitted)
 	}
 
-	e := strings.Split(s[1], "-")
-
-	es := strings.Split(gs[1], "-")
-
-	if len(e) == len(es) {
-		return gtid, nil
+	if currentBinlogSet == transaction {
+		return transaction, nil
 	}
 
-	eidx := 0
-	if len(e) == 2 {
-		eidx = 1
-	}
+	binlogSet := strings.Split(currentBinlogSetSplitted[1], "-")
 
-	return gs[0] + ":" + es[0] + "-" + e[eidx], nil
+	return currentBinlogSetSplitted[0] + ":" + binlogSet[0] + "-" + transactionSplitted[1], nil
 }
 
 func reverse(list []string) {
