@@ -12,8 +12,6 @@ import (
 	"github.com/caarlos0/env"
 )
 
-var action string
-
 func main() {
 	command := "collect"
 	if len(os.Args) > 1 {
@@ -71,7 +69,6 @@ func getCollectorConfig() (collector.Config, error) {
 	err := env.Parse(&cfg)
 
 	return cfg, err
-
 }
 
 func getRecovererConfig() (recoverer.Config, error) {

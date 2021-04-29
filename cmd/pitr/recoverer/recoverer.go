@@ -443,16 +443,23 @@ func getExtendGTIDSet(gtidSet, gtid string) (string, error) {
 		return "", errors.Errorf("incorrect source in gtid set %s", gtidSet)
 	}
 
-	e := strings.Split(s[1], "-")
-	eidx := 1
-	if len(e) < 2 {
-		eidx = 0
-	}
 	gs := strings.Split(gtid, ":")
 	if len(gs) < 2 {
 		return "", errors.Errorf("incorrect source in gtid set %s", gtid)
 	}
+
+	e := strings.Split(s[1], "-")
+
 	es := strings.Split(gs[1], "-")
+
+	if len(e) == len(es) {
+		return gtid, nil
+	}
+
+	eidx := 0
+	if len(e) == 2 {
+		eidx = 1
+	}
 
 	return gs[0] + ":" + es[0] + "-" + e[eidx], nil
 }
