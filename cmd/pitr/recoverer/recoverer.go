@@ -105,7 +105,7 @@ func New(c Config) (*Recoverer, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to cast last set value to in")
 		}
-		transactionNum, err := strconv.ParseInt(strings.Split(c.GTID, ":")[0], 10, 64)
+		transactionNum, err := strconv.ParseInt(strings.Split(c.GTID, ":")[1], 10, 64)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse transaction num to restore")
 		}
