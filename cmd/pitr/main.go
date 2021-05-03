@@ -33,6 +33,7 @@ func runCollector() {
 	if err != nil {
 		log.Fatalln("ERROR: get config:", err)
 	}
+	log.Println("Upload rate is ", config.CollectSpanSec)
 	c, err := collector.New(config)
 	if err != nil {
 		log.Fatalln("ERROR: new controller:", err)
